@@ -1,2 +1,2 @@
-# LastPencil-HyperSkillProject
-The Last Pencil project from HyperSkill.org
+# Hyperskill Java Projects
+Projects from HyperSkill.org
