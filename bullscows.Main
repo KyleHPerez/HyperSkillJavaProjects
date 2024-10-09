@@ -1,0 +1,126 @@
+package bullscows;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        String answer = genRndCode();
+
+        System.out.println("Okay, let's start a game!");
+
+        getAndGradeInput(answer);
+    }
+    public static void getAndGradeInput(String answer) {
+        int turn = 1;
+        String bullPlural = "s";
+        String cowPlural = "s";
+        boolean gameWon = false;
+        Scanner graderScanner = new Scanner(System.in);
+        do {
+            System.out.println("Turn " + turn++ + ": ");
+            char[] inputDigits = new char[answer.length()];
+            try {
+                inputDigits = graderScanner.next().toCharArray();
+            } catch (Exception e) {
+                System.out.println("Error: Invalid input!");
+                System.exit(1);
+            }
+            char[] answerDigits = answer.toCharArray();
+            int bulls = 0;
+            int cows = 0;
+            boolean cowTentative;
+            for (int i = 0; i < answer.length(); i++) {
+                cowTentative = false;
+                for (int j = 0; j < answer.length(); j++) {
+                    if (i == j && answerDigits[i] == inputDigits[j]) {
+                        bulls++;
+                        cowTentative = false;
+                        break;
+                    } else if (answerDigits[i] == inputDigits[j]) {
+                        cowTentative = true;
+                    }
+                }
+                if (cowTentative) {cows++;}
+            }
+            bullPlural = 1 == bulls ? "" : "s";
+            cowPlural = 1 == cows ? "" : "s";
+            gameWon = bulls == answer.length() ? true : false;
+            System.out.printf("Grade: %d bull%s and %d cow%s\n", bulls, bullPlural, cows, cowPlural, answer);
+            if (gameWon) {
+                System.out.println("Congratulations! You guessed the secret code!");
+                System.exit(0);
+            }
+        } while (gameWon == false);
+    }
+
+    public static String genRndCode() {
+        Scanner getCodeScanner = new Scanner(System.in);
+        System.out.println("Input the length of the secret code: ");
+        int length = 0;
+        do {
+            length = getCodeScanner.nextInt();
+            if (36 < length || 1 > length) {
+                System.out.println("Error: Code length cannot be greater than 36 or less than one.");
+                System.exit(1);
+            }
+        } while (36 < length || 1 > length);
+        int numOfSymbols = 0;
+        do {
+            System.out.println("Input the number of possible symbols in the code: ");
+            numOfSymbols = getCodeScanner.nextInt();
+            if (numOfSymbols < length) {
+                System.out.println("Error: The number of possible symbols cannot be fewer than the length of the code!");
+                System.exit(1);
+            }
+            if (36 < numOfSymbols) {
+                System.out.println("Error: The number of symbols cannot be greater than 36.");
+                System.exit(1);
+            }
+        } while (numOfSymbols < length || numOfSymbols > 36);
+        String output = "";
+        for (int i = 0; i < length; i++) {
+            char testDigit = '0';
+            char[] possibleSymbols = new char[numOfSymbols];
+            for (int j = 0; j < numOfSymbols; j++) {
+                if (10 > j) {
+                    possibleSymbols[j] = (char) ('0' + j);
+                } else {
+                    possibleSymbols[j] = (char) ('a' + (j - 10));
+                }
+            }
+            do {
+                testDigit = possibleSymbols[(int) (Math.random() * (numOfSymbols))];
+            } while (output.contains("" + testDigit));
+            output += testDigit;
+            }
+        StringBuilder prepMsg = new StringBuilder("The secret is prepared: ");
+        for (int i = 0; i < length; i++) {
+            prepMsg.append("*");
+        }
+        prepMsg.append("(0");
+        if (1 >= numOfSymbols) {
+            prepMsg.append(").");
+        }
+        if (1 < numOfSymbols) {
+            prepMsg.append("-");
+            if (10 >= numOfSymbols) {
+                prepMsg.append((char) ('0' + (numOfSymbols - 1)));
+                prepMsg.append(")");
+                prepMsg.append(".");
+            } else {
+                prepMsg.append("9");
+            }
+        }
+        if (10 < numOfSymbols) {
+            prepMsg.append(", a");
+            if (11 == numOfSymbols) {
+                prepMsg.append(").");
+            } else {
+                prepMsg.append("-");
+                prepMsg.append((char) ('a' + (numOfSymbols - 11)));
+                prepMsg.append(").");
+            }
+        }
+        System.out.println(prepMsg.toString());
+        return output;
+    }
+}
